@@ -8,72 +8,110 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import Select
 import time
 
-department = input("Class department abbreviation: ")
-class_num = input("Class number: ")
-
 service = Service(executable_path="chromedriver.exe")
 driver = webdriver.Chrome(service=service)
 
 driver.get("https://csprd.louisville.edu/psp/ps_class/EMPLOYEE/PSFT_CS/c/COMMUNITY_ACCESS.CLASS_SEARCH./x?")
 
-#WebDriverWait(driver, 5).until(
-#    EC.presence_of_element_located((By.ID, "CLASS_SRCH_WRK2_INSTITUTION$31$"))
-#)
-#
-#select_element = driver.find_element(By.ID, "CLASS_SRCH_WRK2_INSTITUTION$31$")
-#select = Select(select_element)
-#select.select_by_visible_text("University of Louisville")
+catalog = []
 
-driver.switch_to.frame("TargetContent")
+for outer in range(3):
+    # Outer loop will iterate through departments
+    department = outer + 1
+    if outer == 0:
+        driver.switch_to.frame("TargetContent")
 
-WebDriverWait(driver, 15).until(
-   EC.presence_of_element_located((By.ID, "CLASS_SRCH_WRK2_STRM$35$"))
-)
+    WebDriverWait(driver, 15).until(
+    EC.presence_of_element_located((By.ID, "CLASS_SRCH_WRK2_STRM$35$"))
+    )
 
-select_element = driver.find_element(By.ID, "CLASS_SRCH_WRK2_STRM$35$")
-select = Select(select_element)
-select.select_by_index(12)
-time.sleep(1)
+    select_element = driver.find_element(By.ID, "CLASS_SRCH_WRK2_STRM$35$")
+    select = Select(select_element)
+    select.select_by_index(11)
+    time.sleep(1)
 
-select_element = driver.find_element(By.ID, "SSR_CLSRCH_WRK_ACAD_CAREER$0")
-select = Select(select_element)
-select.select_by_value("UGRD")
-time.sleep(1)
+    select_element = driver.find_element(By.ID, "SSR_CLSRCH_WRK_ACAD_CAREER$0")
+    select = Select(select_element)
+    select.select_by_value("UGRD")
+    time.sleep(1)
 
-select_element = driver.find_element(By.ID, "SSR_CLSRCH_WRK_SUBJECT_SRCH$1")
-select = Select(select_element)
-select.select_by_value(department)
+    select_element = driver.find_element(By.ID, "SSR_CLSRCH_WRK_SUBJECT_SRCH$1")
+    select = Select(select_element)
+    select.select_by_index(department)
 
-select_element = driver.find_element(By.ID, "SSR_CLSRCH_WRK_INSTRUCTION_MODE$3")
-select = Select(select_element)
-select.select_by_value("P")
+    search = driver.find_element(By.ID, "CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH")
+    search.click()
 
-class_num_element = driver.find_element(By.ID, "SSR_CLSRCH_WRK_CATALOG_NBR$2")
-class_num_element.send_keys(class_num)
+    driver.switch_to.default_content()
+    driver.switch_to.frame("TargetContent")
 
-search = driver.find_element(By.ID, "CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH")
-search.click()
+    course = []
+    course_nums = []
 
-time.sleep(5)
+    # Get the department's abbreviation
+    WebDriverWait(driver, 15).until(
+    EC.presence_of_element_located((By.ID, "SSR_CLSRSLT_WRK_GROUPBOX2$0"))
+    )
+    abbr = driver.find_element(By.ID, "SSR_CLSRSLT_WRK_GROUPBOX2$0").get_attribute("title").split()[2]
+    
+    # Gathers the class nums for the department
+    for j in range(100):
+        try:
+            full_name = driver.find_element(By.ID, "SSR_CLSRSLT_WRK_GROUPBOX2$" + str(j)).get_attribute("title")
+            num = full_name.split()[3]
+            course_nums.append(num)
+        except:
+            break
 
-driver.switch_to.default_content()
-driver.switch_to.frame("TargetContent")
+    # Go back to input screen to modify search
+    modify = driver.find_element(By.ID, "CLASS_SRCH_WRK2_SSR_PB_MODIFY$5$")
+    modify.click()
 
-i = 0
-available_times = []
-time_prefix = "MTG_DAYTIME$"
+    # Gather information for each course
+    for num in course_nums:
+        WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.ID, "SSR_CLSRCH_WRK_CATALOG_NBR$2"))
+        )
 
-while True:
-    this_prefix = time_prefix + str(i)
+        class_num_element = driver.find_element(By.ID, "SSR_CLSRCH_WRK_CATALOG_NBR$2")
+        class_num_element.clear()
+        class_num_element.send_keys(num)
 
-    try:
-        driver.find_element(By.ID, this_prefix).is_displayed()
-        available_times.append(driver.find_element(By.ID, this_prefix).text)
-    except:
-        break
-    i += 1
-        
-for e in available_times:
-    print(e)
+        search = driver.find_element(By.ID, "CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH")
+        search.click()
 
+        driver.switch_to.default_content()
+        driver.switch_to.frame("TargetContent")
+
+        # Gather information for each section of each course
+        for k in range(20):
+            try:    
+                course = []
+                course.append(abbr)
+                course.append(num)
+                
+                # Course time
+                WebDriverWait(driver, 15).until(
+                EC.presence_of_element_located((By.ID, "MTG_DAYTIME$0"))
+                )
+                driver.find_element(By.ID, "MTG_DAYTIME$" + str(k)).is_displayed()
+                course.append(driver.find_element(By.ID, "MTG_DAYTIME$" + str(k)).text)
+
+                # Course room
+                driver.find_element(By.ID, "MTG_ROOM$" + str(k)).is_displayed()
+                course.append(driver.find_element(By.ID, "MTG_ROOM$" + str(k)).text)
+                
+                catalog.append(course)
+                innerCount += 1
+            except:
+                break
+        modify = driver.find_element(By.ID, "CLASS_SRCH_WRK2_SSR_PB_MODIFY$5$")
+        modify.click()
+    WebDriverWait(driver, 15).until(
+    EC.presence_of_element_located((By.ID, "CLASS_SRCH_WRK2_SSR_PB_CLEAR"))
+    )
+    clear = driver.find_element(By.ID, "CLASS_SRCH_WRK2_SSR_PB_CLEAR")
+    clear.click()
+
+print(catalog)
 driver.quit()
