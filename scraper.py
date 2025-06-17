@@ -7,6 +7,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import Select
 import time
+import pandas as pd
+import numpy as np
 
 service = Service(executable_path="chromedriver.exe")
 driver = webdriver.Chrome(service=service)
@@ -14,6 +16,10 @@ driver = webdriver.Chrome(service=service)
 driver.get("https://csprd.louisville.edu/psp/ps_class/EMPLOYEE/PSFT_CS/c/COMMUNITY_ACCESS.CLASS_SEARCH./x?")
 
 catalog = []
+departments = []
+numbers = []
+times = []
+locations = []
 
 for outer in range(3):
     # Outer loop will iterate through departments
@@ -87,21 +93,21 @@ for outer in range(3):
         for k in range(20):
             try:    
                 course = []
-                course.append(abbr)
-                course.append(num)
+                departments.append(abbr)
+                numbers.append(num)
                 
                 # Course time
                 WebDriverWait(driver, 15).until(
                 EC.presence_of_element_located((By.ID, "MTG_DAYTIME$0"))
                 )
                 driver.find_element(By.ID, "MTG_DAYTIME$" + str(k)).is_displayed()
-                course.append(driver.find_element(By.ID, "MTG_DAYTIME$" + str(k)).text)
+                times.append(driver.find_element(By.ID, "MTG_DAYTIME$" + str(k)).text)
 
                 # Course room
                 driver.find_element(By.ID, "MTG_ROOM$" + str(k)).is_displayed()
-                course.append(driver.find_element(By.ID, "MTG_ROOM$" + str(k)).text)
+                locations.append(driver.find_element(By.ID, "MTG_ROOM$" + str(k)).text)
                 
-                catalog.append(course)
+                # catalog.append(course)
                 innerCount += 1
             except:
                 break
@@ -113,5 +119,8 @@ for outer in range(3):
     clear = driver.find_element(By.ID, "CLASS_SRCH_WRK2_SSR_PB_CLEAR")
     clear.click()
 
-print(catalog)
+dict = {'department': departments, 'number': numbers, 'time': times, 'location': locations}
+df = pd.DataFrame(dict)
+df.to_csv('catalog.csv')
+
 driver.quit()
