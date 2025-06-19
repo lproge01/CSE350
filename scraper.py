@@ -20,8 +20,11 @@ departments = []
 numbers = []
 times = []
 locations = []
+instructors = []
+card_cores = []
+titles = []
 
-for outer in range(3):
+for outer in range(9):
     # Outer loop will iterate through departments
     department = outer + 1
     if outer == 0:
@@ -54,11 +57,14 @@ for outer in range(3):
     course = []
     course_nums = []
 
-    # Get the department's abbreviation
-    WebDriverWait(driver, 15).until(
-    EC.presence_of_element_located((By.ID, "SSR_CLSRSLT_WRK_GROUPBOX2$0"))
-    )
-    abbr = driver.find_element(By.ID, "SSR_CLSRSLT_WRK_GROUPBOX2$0").get_attribute("title").split()[2]
+    # Get the department's abbreviation, or continue if no classes in dept.
+    try:
+        WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.ID, "SSR_CLSRSLT_WRK_GROUPBOX2$0"))
+        )
+        abbr = driver.find_element(By.ID, "SSR_CLSRSLT_WRK_GROUPBOX2$0").get_attribute("title").split()[2]
+    except:
+        continue
     
     # Gathers the class nums for the department
     for j in range(100):
@@ -89,26 +95,44 @@ for outer in range(3):
         driver.switch_to.default_content()
         driver.switch_to.frame("TargetContent")
 
+        WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.ID, "MTG_DAYTIME$0"))
+        )
+
         # Gather information for each section of each course
         for k in range(20):
             try:    
                 course = []
-                departments.append(abbr)
-                numbers.append(num)
                 
                 # Course time
-                WebDriverWait(driver, 15).until(
-                EC.presence_of_element_located((By.ID, "MTG_DAYTIME$0"))
-                )
                 driver.find_element(By.ID, "MTG_DAYTIME$" + str(k)).is_displayed()
-                times.append(driver.find_element(By.ID, "MTG_DAYTIME$" + str(k)).text)
-
-                # Course room
-                driver.find_element(By.ID, "MTG_ROOM$" + str(k)).is_displayed()
-                locations.append(driver.find_element(By.ID, "MTG_ROOM$" + str(k)).text)
+                times.append(driver.find_element(By.ID, "MTG_DAYTIME$" + str(k)).text.replace("\n", "/"))
                 
-                # catalog.append(course)
-                innerCount += 1
+                # Department and number
+                departments.append(abbr)
+                numbers.append(num)
+
+                # Card core and title
+                card_core = ""
+                driver.find_element(By.ID, "SSR_CLSRSLT_WRK_GROUPBOX2$0").is_displayed()
+                dash_split = driver.find_element(By.ID, "SSR_CLSRSLT_WRK_GROUPBOX2$0").get_attribute("title").split(" - ")
+                if(len(dash_split) == 3):
+                    card_core = dash_split[2]
+                card_cores.append(card_core)
+                titles.append(dash_split[1])
+
+                # Course location
+                driver.find_element(By.ID, "MTG_ROOM$" + str(k)).is_displayed()
+                location = driver.find_element(By.ID, "MTG_ROOM$" + str(k)).text.replace("\n", " ")
+                location = location.rstrip(" / ")
+                location = location.rstrip(" /")
+                if(location == "ONLINE / Online"):
+                    location = "ONLINE"
+                locations.append(location)
+
+                # Instructor(s)
+                driver.find_element(By.ID, "MTG_ROOM$" + str(k)).is_displayed()
+                instructors.append(driver.find_element(By.ID, "MTG_INSTR$" + str(k)).text.replace("\n", " "))
             except:
                 break
         modify = driver.find_element(By.ID, "CLASS_SRCH_WRK2_SSR_PB_MODIFY$5$")
@@ -119,7 +143,15 @@ for outer in range(3):
     clear = driver.find_element(By.ID, "CLASS_SRCH_WRK2_SSR_PB_CLEAR")
     clear.click()
 
-dict = {'department': departments, 'number': numbers, 'time': times, 'location': locations}
+# print("departments: " + str(len(departments)))
+# print("numbers: " + str(len(numbers)))
+# print("titles: " + str(len(titles)))
+# print("times: " + str(len(times)))
+# print("locations: " + str(len(locations)))
+# print("instructors: " + str(len(instructors)))
+# print("card_cores: " + str(len(card_cores)))
+
+dict = {'department': departments, 'number': numbers, 'title': titles, 'time': times, 'location': locations, 'instructor': instructors, 'card_core': card_cores}
 df = pd.DataFrame(dict)
 df.to_csv('catalog.csv')
 
