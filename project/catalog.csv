@@ -1,5 +1,5 @@
 <<<<<<< HEAD:project/catalog.csv
-,department,number,title,time,location,instructor,card_core
+our_key,department,number,title,time,location,instructor,card_core
 0,ACCT,201,Principles of Financial Accounting, ,ONLINE,Matthew Cushing,
 1,ACCT,201,Principles of Financial Accounting, ,ONLINE,Matthew Cushing,
 2,ACCT,202,Principles of Managerial Accounting, ,ONLINE,Peter Aghimien,
