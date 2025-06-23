@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Schedule Results</title>
+</head>
+<body>
+    <h1>Matching Classes</h1>
+    {% if results %}
+        <ul>
+            {% for row in results %}
+                <li>{{ row['department'] }} {{ row['number'] }} - {{ row['title'] }} @ {{ row['time'] }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No matching classes found.</p>
+    {% endif %}
+    <a href="/">Back</a>
+</body>
+</html>

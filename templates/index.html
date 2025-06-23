@@ -136,6 +136,7 @@
   </style>
 </head>
 <body>
+  <form action="/generate_schedule" method="POST">
   <div class="container">
     <h1>Semester Shaper</h1>
     <p class="description">
@@ -148,8 +149,8 @@
       <div class="form-section">
         <div class="form-row">
           <label for="class1">Class 1</label>
-          <input type="text" id="class1" placeholder="Ex. CSE 350">
-          <select>
+          <input type="text" id="class1" name="class1" placeholder="Ex. CSE 350">
+          <select name="pref1">
             <option>No preference</option>
             <option>Online</option>
             <option>In-person</option>
@@ -157,8 +158,8 @@
         </div>
         <div class="form-row">
           <label for="class2">Class 2</label>
-          <input type="text" id="class2" placeholder="Ex. CSE 350">
-          <select>
+          <input type="text" id="class2" name="class2" placeholder="Ex. CSE 350">
+          <select name="pref2">
             <option>No preference</option>
             <option>Online</option>
             <option>In-person</option>
@@ -166,8 +167,8 @@
         </div>
         <div class="form-row">
           <label for="class3">Class 3</label>
-          <input type="text" id="class3" placeholder="Ex. CSE 350">
-          <select>
+          <input type="text" id="class3" name="class3" placeholder="Ex. CSE 350">
+          <select name="pref3">
             <option>No preference</option>
             <option>Online</option>
             <option>In-person</option>
@@ -175,8 +176,8 @@
         </div>
         <div class="form-row">
           <label for="class4">Class 4</label>
-          <input type="text" id="class4" placeholder="Ex. CSE 350">
-          <select>
+          <input type="text" id="class4" name="class4" placeholder="Ex. CSE 350">
+          <select name="pref4">
             <option>No preference</option>
             <option>Online</option>
             <option>In-person</option>
@@ -184,8 +185,8 @@
         </div>
         <div class="form-row">
           <label for="class2">Class 5</label>
-          <input type="text" id="class5" placeholder="Ex. CSE 350">
-          <select>
+          <input type="text" id="class5" name="class5" placeholder="Ex. CSE 350">
+          <select name="pref5">
             <option>No preference</option>
             <option>Online</option>
             <option>In-person</option>
@@ -193,8 +194,8 @@
         </div>
         <div class="form-row">
           <label for="class2">Class 6</label>
-          <input type="text" id="class6" placeholder="Ex. CSE 350">
-          <select>
+          <input type="text" id="class6" name="class6" placeholder="Ex. CSE 350">
+          <select name="pref6">
             <option>No preference</option>
             <option>Online</option>
             <option>In-person</option>
@@ -202,8 +203,8 @@
         </div>
         <div class="form-row">
           <label for="class2">Class 7</label>
-          <input type="text" id="class7" placeholder="Ex. CSE 350">
-          <select>
+          <input type="text" id="class7" name="class7" placeholder="Ex. CSE 350">
+          <select name="pref7">
             <option>No preference</option>
             <option>Online</option>
             <option>In-person</option>
@@ -211,8 +212,8 @@
         </div>
         <div class="form-row">
           <label for="class2">Class 8</label>
-          <input type="text" id="class8" placeholder="Ex. CSE 350">
-          <select>
+          <input type="text" id="class8" name="class8" placeholder="Ex. CSE 350">
+          <select name="pref8">
             <option>No preference</option>
             <option>Online</option>
             <option>In-person</option>
@@ -220,8 +221,8 @@
         </div>
         <div class="form-row">
           <label for="class2">Class 9</label>
-          <input type="text" id="class9" placeholder="Ex. CSE 350">
-          <select>
+          <input type="text" id="class9" name="class9" placeholder="Ex. CSE 350">
+          <select name="pref9">
             <option>No preference</option>
             <option>Online</option>
             <option>In-person</option>
@@ -229,8 +230,8 @@
         </div>
         <div class="form-row">
           <label for="class2">Class 10</label>
-          <input type="text" id="class10" placeholder="Ex. CSE 350">
-          <select>
+          <input type="text" id="class10" name="class10" placeholder="Ex. CSE 350">
+          <select name="pref10">
             <option>No preference</option>
             <option>Online</option>
             <option>In-person</option>
@@ -243,30 +244,30 @@
         <div class="toggle-group">
         <div class="label">Please check the times you DO NOT want to have classes:</div>
         <div class="column">
-            <label><input type="checkbox"> 8 am</label>
-            <label><input type="checkbox"> 9 am</label>
-            <label><input type="checkbox"> 10 am</label>
-            <label><input type="checkbox"> 11 am</label>
-            <label><input type="checkbox"> 12 pm</label>
-            <label><input type="checkbox"> 1 pm</label>
-            <label><input type="checkbox"> 2 pm</label>
-            <label><input type="checkbox"> 3 pm</label>
-            <label><input type="checkbox"> 4 pm</label>
-            <label><input type="checkbox"> 5 pm</label>
+            <label><input type="checkbox" name="blocked_times" value="8 am"> 8 am</label>
+            <label><input type="checkbox" name="blocked_times" value="9 am"> 9 am</label>
+            <label><input type="checkbox" name="blocked_times" value="10 am"> 10 am</label>
+            <label><input type="checkbox" name="blocked_times" value="11 am"> 11 am</label>
+            <label><input type="checkbox" name="blocked_times" value="12 pm"> 12 pm</label>
+            <label><input type="checkbox" name="blocked_times" value="1 pm"> 1 pm</label>
+            <label><input type="checkbox" name="blocked_times" value="2 pm"> 2 pm</label>
+            <label><input type="checkbox" name="blocked_times" value="3 pm"> 3 pm</label>
+            <label><input type="checkbox" name="blocked_times" value="4 pm"> 4 pm</label>
+            <label><input type="checkbox" name="blocked_times" value="5 pm"> 5 pm</label>
         </div>
         </div>
 
         <div class="toggle-group">
         <div class="label">Please check any Cardinal Core Classes you'd like to take:</div>
         <div class="column">
-            <label><input type="checkbox"> WC</label>
-            <label><input type="checkbox"> OC</label>
-            <label><input type="checkbox"> QR</label>
-            <label><input type="checkbox"> AH</label>
-            <label><input type="checkbox"> SB/SBH</label>
-            <label><input type="checkbox"> S/SL/B</label>
-            <label><input type="checkbox"> D1</label>
-            <label><input type="checkbox"> D2</label>
+            <label><input type="checkbox" name="core_prefs" value="WC"> WC</label>
+            <label><input type="checkbox" name="core_prefs" value="OC"> OC</label>
+            <label><input type="checkbox" name="core_prefs" value="QR"> QR</label>
+            <label><input type="checkbox" name="core_prefs" value="AH"> AH</label>
+            <label><input type="checkbox" name="core_prefs" value="SB/SBH"> SB/SBH</label>
+            <label><input type="checkbox" name="core_prefs" value="S/SL/B"> S/SL/B</label>
+            <label><input type="checkbox" name="core_prefs" value="D1"> D1</label>
+            <label><input type="checkbox" name="core_prefs" value="D2"> D2</label>
         </div>
         </div>
     </div>
@@ -280,5 +281,6 @@
         </button>
     </div>
   </div>
+  </form>
 </body>
 </html>
