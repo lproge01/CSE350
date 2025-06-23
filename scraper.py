@@ -24,7 +24,7 @@ instructors = []
 card_cores = []
 titles = []
 
-for outer in range(9):
+for outer in range(109):
     # Outer loop will iterate through departments
     department = outer + 1
     if outer == 0:
@@ -116,7 +116,9 @@ for outer in range(9):
                 card_core = ""
                 driver.find_element(By.ID, "SSR_CLSRSLT_WRK_GROUPBOX2$0").is_displayed()
                 dash_split = driver.find_element(By.ID, "SSR_CLSRSLT_WRK_GROUPBOX2$0").get_attribute("title").split(" - ")
-                if(len(dash_split) == 3):
+                if(len(dash_split) > 3):
+                    card_core = dash_split[len(dash_split) - 1]
+                elif(len(dash_split) == 3):
                     card_core = dash_split[2]
                 card_cores.append(card_core)
                 titles.append(dash_split[1])
