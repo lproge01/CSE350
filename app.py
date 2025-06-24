@@ -6,7 +6,7 @@ app = Flask(__name__)
 db_access = {
     'host'      : 'localhost',
     'user'      : 'root',
-    'password'  : 'Tater4567890!',
+    'password'  : '',
     'database'  : 'cse350'
 }
 
@@ -20,7 +20,7 @@ def generate_schedule():
         
         classes = []
         for i in range(1, 11):
-            code = request.form.get(f'class{i}', '').upper().replace(' ', '')
+            code = request.form.get(f'class{i}', '').upper()
             pref = request.form.get(f'pref{i}', 'No preference')
             if code:
                 classes.append({'code': code, 'pref': pref})
@@ -35,7 +35,7 @@ def generate_schedule():
             cursor = conn.cursor(dictionary=True)
 
             for c in classes:
-                dept, number = c['code'].split() if ' ' in c['code'] else (c['code'], '')
+                dept, number = c['code'].split()
                 query = """
                 SELECT * FROM catalog
                 WHERE department = %s AND number = %s
