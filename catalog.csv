@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD:project/catalog.csv
 our_key,department,number,title,time,location,instructor,card_core
 0,ACCT,201,Principles of Financial Accounting, ,ONLINE,Matthew Cushing,
 1,ACCT,201,Principles of Financial Accounting, ,ONLINE,Matthew Cushing,
@@ -448,8 +445,8 @@ our_key,department,number,title,time,location,instructor,card_core
 443,MGMT,301,Management and Organizational Behavior, ,ONLINE,Anne Zwerg,
 444,MGMT,305,Human Resource Management, ,ONLINE,Alfred Frager,
 445,MGMT,305,Human Resource Management, ,ONLINE,Alfred Frager,
-446,MGMT,315,Collaboration and Negotiation-SB, ,ONLINE,Cory Williams,
-447,MGMT,315,Collaboration and Negotiation-SB, ,ONLINE,Cory Williams,
+446,MGMT,315,Collaboration and Negotiation, ,ONLINE,Cory Williams,SB
+447,MGMT,315,Collaboration and Negotiation, ,ONLINE,Cory Williams,SB
 448,MGMT,320,Principles of Operations Management, ,ONLINE,Mahesh Gupta,
 449,MGMT,320,Principles of Operations Management, ,ONLINE,Mahesh Gupta,
 450,MGMT,397,Co-op in Management, ,INTERN,Anne Zwerg,
