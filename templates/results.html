@@ -1,78 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Schedule Results</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 2rem;
-            background-color: #f9f9f9;
-        }
-        h1 {
-            text-align: center;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 2rem;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 0.75rem;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .no-results {
-            text-align: center;
-            color: #555;
-            font-style: italic;
-            margin-top: 2rem;
-        }
-        a {
-            display: block;
-            margin-top: 2rem;
-            text-align: center;
-            text-decoration: none;
-            font-weight: bold;
-            color: #0077cc;
-        }
-    </style>
+    <title>Scedule Results</title>
 </head>
 <body>
-    <h1>Matching Classes</h1>
+    <h1>Possible Schedules</h1>
     {% if results %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Department</th>
-                    <th>Number</th>
-                    <th>Title</th>
-                    <th>Time</th>
-                    <th>Location</th>
-                    <th>Instructor</th>
-                    <th>Cardinal Core</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in results %}
-                    <tr>
-                        <td>{{ row.department }}</td>
-                        <td>{{ row.number }}</td>
-                        <td>{{ row.title }}</td>
-                        <td>{{ row.time }}</td>
-                        <td>{{ row.location }}</td>
-                        <td>{{ row.instructor }}</td>
-                        <td>{{ row.card_core }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% for schedule in results  %}
+            <div style = "margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">
+                <h3>Schedule {{  loop.index  }}</h3>
+                <ul>
+                    {% for course in schedule %}
+                        <li>{{ course.department }} {{ course.number }} - {{ course.title }}<br>
+                        Time: {{ course.time }} | Location: {{course.location }} | Core: {{ course.card_core }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
     {% else %}
-        <p class="no-results">No matching classes found based on your preferences.</p>
+        <p>No valid schedules found matching your preferences.</p>
     {% endif %}
+
     <a href="/">Go Back</a>
 </body>
 </html>
