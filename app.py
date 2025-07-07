@@ -9,7 +9,7 @@ app = Flask(__name__)
 db_access = {
     'host'      : 'localhost',
     'user'      : 'root',
-    'password'  : 'Tater4567890!',
+    'password'  : '',
     'database'  : 'cse350'
 }
 
