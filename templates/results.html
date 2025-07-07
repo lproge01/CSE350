@@ -1,10 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Scedule Results</title>
+    <title>Schedule Results</title>
 </head>
 <body>
     <h1>Possible Schedules</h1>
+    {% if excluded %}
+        <h3>Some courses were excluded:</h3>
+        <ul>
+            {% for reason in excluded %}
+                <li>{{ reason }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
     {% if results %}
         {% for schedule in results  %}
             <div style = "margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc;">

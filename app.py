@@ -9,7 +9,7 @@ app = Flask(__name__)
 db_access = {
     'host'      : 'localhost',
     'user'      : 'root',
-    'password'  : '',
+    'password'  : 'Tater4567890!',
     'database'  : 'cse350'
 }
 
@@ -57,11 +57,9 @@ def has_conflict(schedule):
                 return True
     return False
 
-def satis_prefs(row, blocked_times, core_prefs):
+def satis_prefs(row, blocked_times):
     time = row.get('time', '')
     if any(bt in time for bt in blocked_times):
-        return False
-    if core_prefs and row.get('card_core', '') not in core_prefs:
         return False
     return True
 
@@ -71,8 +69,9 @@ def home():
 
 @app.route('/generate_schedule', methods=['POST'])
 def generate_schedule():
-        
+    
     classes = []
+    excluded_classes = []
     for i in range(1, 11):
         code = request.form.get(f'class{i}', '').upper()
         pref = request.form.get(f'pref{i}', 'No preference')
@@ -91,23 +90,46 @@ def generate_schedule():
     conn = mysql.connector.connect(**db_access)
     cursor = conn.cursor(dictionary=True)
 
+    if core_prefs:
+        placeholder = ','.join(['%s'] * len(core_prefs))
+        core_query = f"""
+        SELECT * FROM catalog
+        WHERE card_core = ({placeholder})
+        """
+        cursor.execute(core_query, core_prefs)
+        core_classes = cursor.fetchall()
+        core_classes = [c for c in core_classes if satis_prefs(c, blocked_times)]
+        if core_classes:
+            course_options.append(core_classes)
+
     for course in classes:
         query = """
         SELECT * FROM catalog
         WHERE department = %s AND number = %s
         """
+        
         cursor.execute(query, (course['dept'], course['num']))
         sections = cursor.fetchall()
 
+        if not sections:
+            excluded_classes.append(f"{course['dept']} {course['num']}: not found")
+            continue
+
         #filter by location/online
         if course['pref'] != 'No preference':
-            sections = [s for s in sections if s['location'].lower() == course['pref'].lower()]
+            filtered = [s for s in sections if s['location'].lower() == course['pref'].lower()]
+            if not filtered:
+                excluded_classes.append(f"{course['dept']} {course['num']}: preference '{course['pref']}' not available")
+                continue
+            sections = filtered
 
         #filter blocked times
-        sections = [s for s in sections if satis_prefs(s, blocked_times, core_prefs)]
+        filtered = [s for s in sections if satis_prefs(s, blocked_times)]
+        if not filtered:
+            excluded_classes.append(f"{course['dept']} {course['num']}: only in blocked times")
+            continue
 
-        if sections:
-            course_options.append(sections)
+        course_options.append(filtered)
 
     cursor.close()
     conn.close()
@@ -123,7 +145,7 @@ def generate_schedule():
         if not has_conflict(combo):
             valid_schedules.append(combo)
 
-    return render_template('results.html', results=valid_schedules)
+    return render_template('results.html', results=valid_schedules, excluded=excluded_classes)
                 
 
 if __name__ == '__main__':
