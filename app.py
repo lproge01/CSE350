@@ -91,16 +91,23 @@ def generate_schedule():
     cursor = conn.cursor(dictionary=True)
 
     if core_prefs:
-        placeholder = ','.join(['%s'] * len(core_prefs))
-        core_query = f"""
-        SELECT * FROM catalog
-        WHERE card_core = ({placeholder})
-        """
-        cursor.execute(core_query, core_prefs)
-        core_classes = cursor.fetchall()
-        core_classes = [c for c in core_classes if satis_prefs(c, blocked_times)]
-        if core_classes:
-            course_options.append(core_classes)
+        for pref in core_prefs:
+            if pref in ('S', 'B'):
+                query = "SELECT * FROM catalog WHERE card_core = %s"
+                param = (pref,)
+            else:
+                query = "SELECT * FROM catalog WHERE card_core LIKE %s"
+                param = (f"%{pref}%",)
+
+            cursor.execute(query, param)
+            core_classes = cursor.fetchall()
+            core_classes = [c for c in core_classes if satis_prefs(c, blocked_times)]
+
+            if core_classes:
+                course_options.append(core_classes)
+            else:
+                excluded_classes.append(f"No available courses for core requirement '{pref}'")
+
 
     for course in classes:
         query = """
@@ -118,6 +125,8 @@ def generate_schedule():
         #filter by location/online
         if course['pref'] != 'No preference':
             filtered = [s for s in sections if s['location'].lower() == course['pref'].lower()]
+            if course['pref'] == "In-person":
+                filtered = [s for s in sections if s['location'].lower() != 'online']
             if not filtered:
                 excluded_classes.append(f"{course['dept']} {course['num']}: preference '{course['pref']}' not available")
                 continue
