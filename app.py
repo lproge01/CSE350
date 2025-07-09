@@ -19,7 +19,11 @@ DAY_MAP = {
 }
 
 def time_to_minutes(t):
-    return int(datetime.strptime(t.upper(), "%I:%M%p").hour) * 60 + int(datetime.strptime(t.upper(), "%I:%M%p").minute)
+    t = t.strip().upper()
+    try:
+        return int(datetime.strptime(t, "%I:%M%p").hour) * 60 + int(datetime.strptime(t, "%I:%M%p").minute)
+    except ValueError:
+        return int(datetime.strptime(t, "%I %p").hour) * 60
 
 def parse_time(time_str):
     if not time_str.strip():
@@ -58,9 +62,26 @@ def has_conflict(schedule):
     return False
 
 def satis_prefs(row, blocked_times):
-    time = row.get('time', '')
-    if any(bt in time for bt in blocked_times):
-        return False
+    class_blocks = parse_time(row.get('time', ''))
+    for cb in class_blocks:
+        print(cb)
+
+    blocked_ranges = []
+    for bt in blocked_times:
+        print(bt)
+        try:
+            bt_clean = bt.strip().upper()
+            bt_start = time_to_minutes(bt_clean)
+            bt_end = bt_start + 60
+            blocked_ranges.append((bt_start, bt_end))
+        except Exception:
+            continue
+
+    for _, class_start, class_end in class_blocks:
+        for bt_start, bt_end in blocked_ranges:
+            if class_start < bt_end and class_end > bt_start:
+                return False
+
     return True
 
 @app.route('/')
