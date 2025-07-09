@@ -1,0 +1,13 @@
+WITH CTE AS (
+    SELECT
+        our_key,
+        ROW_NUMBER() OVER (
+            PARTITION BY department, number, title, time, location, instructor, card_core
+            ORDER BY our_key
+        ) AS rn
+    FROM catalog
+)
+DELETE FROM catalog
+WHERE our_key IN (
+    SELECT our_key FROM CTE WHERE rn > 1
+);
