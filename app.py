@@ -99,6 +99,7 @@ def generate_schedule():
         if code:
             parts = code.split()
             if len(parts) != 2:
+                excluded_classes.append(f"{parts} {''}: not found")
                 continue
             dept, num = parts
             classes.append({'dept': dept.upper(), 'num' : num, 'pref': pref})
